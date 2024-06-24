@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR_Code</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            background-image: linear-gradient(to right, rgb(146, 91, 91), rgb(211, 54, 54), rgb(81, 81, 137));
+            height: 100vh;
+            width: 100%;
+        }
+
+        header {
+            background-color: #fff;
+            height: 450px;
+            width: 55%;
+            margin: auto;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 10px;
+            transition: all 0.5s linear;
+        }
+
+        h1 {
+            font-size: 25px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: capitalize;
+        }
+
+        p {
+            font-size: 15px;
+            font-weight: 200;
+        }
+
+        input {
+            margin: 20px 0px 20px;
+            border: 1px solid #999;
+            padding: 15px;
+            border-radius: 7px;
+            width: 100%;
+        }
+
+        #btn {
+            padding: 10px;
+            border: none;
+            width: 100%;
+            background-color: rgb(34, 34, 156);
+            color: white;
+            border-radius: 7px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .output-qr {
+            display: none;
+        }
+
+        img {
+            height: 170px;
+            width: 170px;
+        }
+
+        .active {
+            display: block;
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            width: 100%;
+            animation: my-border 2s linear infinite;
+            /* border: 1px solid black; */
+        }
+
+        @keyframes my-border {
+            0% {
+                border: none;
+            }
+
+            100% {
+                border: 1px solid red;
+            }
+        }
+
+        #download-link {
+            height: 50px;
+            width: 150px;
+            margin-top: 15px;
+            border-radius: 20px;
+            padding: 10px;
+            display: grid;
+            place-items: center;
+            outline: none;
+            font-size: 20px;
+            border: none;
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>QR Code Generator</h1>
+        <p>Enter a URL or Text to generate QR</p>
+        <input type="text" placeholder="Enter Text or URL" id="inp">
+        <button id="btn">Generate QR Code</button>
+        <div class="output-qr">
+            <img src="" alt="QR For the url or text">
+            <a href="" id="download-link" download="qrcode.png">Download QR</a>
+        </div>
+    </header>
+    <script>
+        const wrapper = document.querySelector("header");
+        inputElement = wrapper.querySelector("#inp");
+        btnElement = wrapper.querySelector("#btn");
+        imgElement = wrapper.querySelector(".output-qr img");
+        outputElement = wrapper.querySelector(".output-qr");
+
+        function generateQR() {
+            let inputValue = inputElement.value;
+            if (!inputValue) return;
+            else {
+                outputElement.classList.add("active");
+                wrapper.style.height = 580 + "px";
+                activeElement = wrapper.querySelector(".active");
+                // activeElement.style.border = "1px solid black";
+                imgElement.src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${inputValue}`;
+                fetch(imgElement.src)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const downloadLink = document.getElementById('download-link');
+                        downloadLink.href = URL.createObjectURL(blob);
+                    });
+            }
+        }
+        btnElement.addEventListener("click", () => {
+            generateQR();
+        })
+        wrapper.addEventListener("keyup", () => {
+            let inputValue = inputElement.value;
+            if (!inputValue) {
+                outputElement.classList.remove("active");
+                wrapper.style.height = 320 + "px";
+            }
+            else {
+                generateQR();
+            }
+        })
+
+        // const apiValue = https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=Example;
+    </script>
+</body>
+
+</html>
